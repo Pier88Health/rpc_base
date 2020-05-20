@@ -1,4 +1,3 @@
-/*jslint node:true*/
 const AddressManager = require('./addressManager.js'),
     grpc = require('grpc'),
     assert = require('assert'),
@@ -9,7 +8,7 @@ function buildClientKey(params) {
 }
 
 const defaultOptions = {
-    protoFolder: './proto/'
+    protoFolder: __dirname + '/proto/'
 }
 class RpcClient {
     constructor(options = {}) {
