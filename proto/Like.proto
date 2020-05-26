@@ -15,6 +15,7 @@ service Like {
 message BiLang {
   string en = 1;
   string zh = 2;
+  string fr = 3;
 }
 
 // The request message containing the user's name.
