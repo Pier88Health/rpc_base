@@ -9,7 +9,7 @@ package RpcCareExample;
 
 // The greeting service definition.
 service RpcCareExample {
-  rpc RpcCareExample (LikeRequest) returns (LikeResponse) {}
+  rpc Like (LikeRequest) returns (LikeResponse) {}
 }
 
 message BiLang {
