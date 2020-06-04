@@ -5,10 +5,10 @@ syntax = "proto3";
 // option java_outer_classname = "HiWorldProto";
 // option objc_class_prefix = "HLWI";
 
-package Like;
+package RpcCareExample;
 
 // The greeting service definition.
-service Like {
+service RpcCareExample {
   rpc Like (LikeRequest) returns (LikeResponse) {}
 }
 
