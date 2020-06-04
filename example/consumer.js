@@ -6,7 +6,7 @@ let registry = new RedisRegistry({ address: "localhost:6379" }),
 
 async function start() {
     try {
-    res = await rpcClient.invoke({
+        res = await rpcClient.invoke({
             serviceName: "Like",
             methodName: "Like",
             request: {
@@ -22,7 +22,7 @@ async function start() {
                 MethodName: 'Like'
             }
         });
-    } catch(err) {
+    } catch (err) {
         console.log('Error: ', err);
     }
     console.log('Result: ', res);
