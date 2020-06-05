@@ -19,8 +19,8 @@ class RpcClient {
         this.clientMap = {};
     }
 
-    async getClient(serviceName) {
-        let protoPath = this.options.protoFolder + serviceName + '.proto',
+    async getClient(namespace, serviceName) {
+        let protoPath = this.options.protoFolder + namespace + "." + serviceName + '.proto',
             packageDefinition,
             proto,
             addressManager,
@@ -66,11 +66,12 @@ class RpcClient {
     async invoke(params) {
         console.log(params);
         let client,
+            namespace = params.namespace,
             serviceName = params.serviceName,
             methodName = params.methodName,
             request = params.request;
         assert(serviceName && methodName, '[RpcClient.invoke] params.serviceName and params.methodName is required');
-        client = await this.getClient(serviceName);
+        client = await this.getClient(namespace, serviceName);
         return new Promise(function (resolve, reject) {
             client[methodName](request, function (err, response) {
                 if (err) {

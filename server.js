@@ -13,10 +13,10 @@ class RpcServer{
         this.server = new grpc.Server();
     }
 
-    async addService(serviceName, methodMap) {
+    async addService(namespace, serviceName, methodMap) {
         assert(serviceName, '[RpcServer.addService] params.serviceName is required');
         assert(methodMap, '[RpcServer.addService] params.methodMap is required');
-        let protoPath = this.options.protoFolder + serviceName + '.proto',
+        let protoPath = this.options.protoFolder + namespace + "." + serviceName + '.proto',
             packageDefinition,
             proto;
         packageDefinition = protoLoader.loadSync(
