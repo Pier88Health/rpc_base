@@ -3,11 +3,13 @@ const grpc = require('grpc'),
     RedisRegistry = require('rpc_base').RedisRegistry,
     fs = require('fs'),
     RpcServer = require('rpc_base').RpcServer,
-    NameSpace = "MedLinc",
+    NameSpace = "MedLinc";
 let bindPoint = "0.0.0.0:" + 8002,
     redisRegistry = new RedisRegistry({ address: "localhost:6379" }),
     rpcServer = new RpcServer({
-        bindPoint: bindPoint
+        bindPoint: bindPoint,
+        namespace: "MedLinc",
+        protoFolder: __dirname + '/../proto/'
     }),
     serviceFileNames = fs.readdirSync(servicePath);
 
@@ -20,14 +22,14 @@ function getServiceName(fileName) {
 
 serviceFileNames.forEach((fileName) => {
     let serviceName = getServiceName(fileName);
-    redisRegistry.register({ serviceName: serviceName, address: "0.0.0.0:" + 8002 });
-    rpcServicePath = servicePath + '/' + NameSpace + "." + fileName;
+    // redisRegistry.register({ serviceName: serviceName, address: "0.0.0.0:" + 8002 });
+    rpcServicePath = servicePath + '/' + fileName;
     rpcService = require(rpcServicePath);
     methodsToAddedInOneService = {};
     Object.keys(rpcService).forEach((methodName) => {
         methodsToAddedInOneService[methodName] = rpcService[methodName];
     });
-    rpcServer.addService(NameSpace, serviceName, methodsToAddedInOneService);
+    rpcServer.addService(serviceName, methodsToAddedInOneService);
 })
 
 rpcServer.start();
