@@ -1,11 +1,14 @@
 const AddressManager = require('./addressManager.js'),
     grpc = require('grpc'),
     assert = require('assert'),
-    protoLoader = require('@grpc/proto-loader');
+    protoLoader = require('@grpc/proto-loader'),
+    commom = require("./lib/common.js");
     // registry = new ConfigRegistry({address: __dirname + "/../rpc/registry/config.json"});
 function buildClientKey(params) {
     return `${params.serviceName}@${params.host}`;
 }
+
+
 
 const defaultOptions = {
     protoFolder: __dirname + '/proto/'
@@ -19,21 +22,24 @@ class RpcClient {
         this.clientMap = {};
     }
 
-    async getClient(serviceName) {
-        let protoPath = this.options.protoFolder + serviceName + '.proto',
+    async getClient(namespace, serviceName) {
+        assert(namespace && serviceName, '[RpcClient.getClient] namespace and serviceName is required');
+        let protoFileName = commom.BuildProtoFileName(namespace, serviceName),
+            protoPath = commom.GetProtoFilePath(this.options.protoFolder, protoFileName),
             packageDefinition,
+            serviceKey = commom.BuildServiceKey(namespace, serviceName),
             proto,
             addressManager,
             address,
             clientKey,
             client;
-        if (!this.addressManagerMap.has(serviceName)) {
-            addressManager = new AddressManager({key: serviceName});
-            this.addressManagerMap.set(serviceName, addressManager);
+        if (!this.addressManagerMap.has(serviceKey)) {
+            addressManager = new AddressManager({key: serviceKey});
+            this.addressManagerMap.set(serviceKey, addressManager);
         } else {
-            addressManager = this.addressManagerMap.get(serviceName);
+            addressManager = this.addressManagerMap.get(serviceKey);
         }
-        this.registry.subscribe({serviceName: serviceName}, (addresses) => {
+        this.registry.subscribe({serviceName: serviceKey}, (addresses) => {
             addressManager.addressList = addresses;
         });
         await addressManager.ready();
@@ -64,13 +70,13 @@ class RpcClient {
     }
 
     async invoke(params) {
-        console.log(params);
         let client,
+            namespace = params.namespace,
             serviceName = params.serviceName,
             methodName = params.methodName,
             request = params.request;
         assert(serviceName && methodName, '[RpcClient.invoke] params.serviceName and params.methodName is required');
-        client = await this.getClient(serviceName);
+        client = await this.getClient(namespace, serviceName);
         return new Promise(function (resolve, reject) {
             client[methodName](request, function (err, response) {
                 if (err) {
