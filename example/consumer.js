@@ -1,14 +1,17 @@
 const RpcClient = require('rpc_base').RpcClient,
-    RedisRegistry = require('rpc_base').RedisRegistry;
+    // RedisRegistry = require('rpc_base').RedisRegistry;
+    ConfigRegistry = require('rpc_base').ConfigRegistry;
 
-let registry = new RedisRegistry({ address: "localhost:6379" }),
-    rpcClient = new RpcClient({ registry: registry });
+// let registry = new RedisRegistry({ address: "localhost:6379" }),
+let registry = new ConfigRegistry({ address: "./config.json" }), 
+    rpcClient = new RpcClient({ registry: registry, protoFolder: "../proto" });
 
 async function start() {
     try {
         res = await rpcClient.invoke({
             serviceName: "Like",
             methodName: "Like",
+            namespace: "MedLinc",
             request: {
                 EntityType: 'FeedItem',
                 EntityId: undefined,
