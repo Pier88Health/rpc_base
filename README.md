@@ -6,6 +6,16 @@ This repo is a common module for all backend repo which needs rpc service. The r
 - RedisRegistry: a register class based on redis
 
 ## exmaple
+
+The exmaple folder of the repo, contain the example code.
+```
+cd exmaple
+// start service provider
+node serviceProvider.js
+// start client
+node consumer.js
+```
+
 - create server
 
 `protoFolder` is the proto folder in your project. if ignore the parameter, rpc_base will find proto in its internal proto folder. rpc_base find proto by serviceName and namespace. if namespace is "MedLinc" and serviceName is "Like", 

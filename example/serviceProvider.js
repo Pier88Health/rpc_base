@@ -3,7 +3,7 @@ const grpc = require('grpc'),
     RedisRegistry = require('rpc_base').RedisRegistry,
     fs = require('fs'),
     RpcServer = require('rpc_base').RpcServer,
-    NameSpace = "MedLinc";
+    namespace = "MedLinc";
 let bindPoint = "0.0.0.0:" + 8002,
     redisRegistry = new RedisRegistry({ address: "localhost:6379" }),
     rpcServer = new RpcServer({
@@ -29,7 +29,7 @@ serviceFileNames.forEach((fileName) => {
     Object.keys(rpcService).forEach((methodName) => {
         methodsToAddedInOneService[methodName] = rpcService[methodName];
     });
-    rpcServer.addService(serviceName, methodsToAddedInOneService);
+    rpcServer.addService(namespace, serviceName, methodsToAddedInOneService);
 })
 
 rpcServer.start();
