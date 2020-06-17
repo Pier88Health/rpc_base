@@ -5,7 +5,7 @@ const AddressManager = require('./addressManager.js'),
     commom = require("./lib/common.js");
     // registry = new ConfigRegistry({address: __dirname + "/../rpc/registry/config.json"});
 function buildClientKey(params) {
-    return `${params.serviceName}@${params.host}`;
+    return `${params.namespace}${params.serviceName}@${params.host}`;
 }
 
 
@@ -47,7 +47,7 @@ class RpcClient {
         if (!address) {
             return null;
         }
-        clientKey = buildClientKey({ServiceName: serviceName, Host: address});
+        clientKey = buildClientKey({namespace: namespace, serviceName: serviceName, host: address});
         client = this.clientMap[clientKey];
         if (client) {
             return client;
