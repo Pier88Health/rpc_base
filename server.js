@@ -1,6 +1,7 @@
 /*jslint node:true*/
 const grpc = require('grpc'),
     assert = require('assert'),
+    commom = require('./lib/common'),
     protoLoader = require('@grpc/proto-loader');
 ;
 const defaultOptions = {
@@ -16,7 +17,8 @@ class RpcServer{
     async addService(namespace, serviceName, methodMap) {
         assert(serviceName, '[RpcServer.addService] params.serviceName is required');
         assert(methodMap, '[RpcServer.addService] params.methodMap is required');
-        let protoPath = this.options.protoFolder + namespace + "." + serviceName + '.proto',
+        let protoFileName = commom.BuildProtoFileName(namespace, serviceName),
+            protoPath = commom.GetProtoFilePath(this.options.protoFolder, protoFileName),
             packageDefinition,
             proto;
         packageDefinition = protoLoader.loadSync(
