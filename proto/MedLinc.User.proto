@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package User;
+
+service User {
+  rpc GetDoctors (GetDoctorsRequest) returns (GetDoctorsResponse) {}
+  rpc GetDoctorDetail (GetDoctorDetailRequest) returns (GetDoctorDetailResponse) {}
+}
+
+message BiLang {
+  string en = 1;
+  string zh = 2;
+}
+
+message MutiPart {
+  string Id = 1;
+  BiLang Name = 2;
+}
+
+message PracticeInfo {
+  string UserId = 1;
+  string AvatarFileName = 2;
+  double AvatarVersion = 3;
+  BiLang Expertise = 4;
+  BiLang DisplayName = 5;
+  MutiPart Affiliation = 6;
+  MutiPart Department = 7;
+  MutiPart SubDepartment = 8;
+  BiLang Title = 9;
+  bool InquiryEnabled = 10;
+  int32 InquiryRate = 11;
+  bool CheckInEnabled = 12;
+}
+
+// The request message containing the user's name.
+message GetDoctorsRequest {
+  string PracticeSearchTerm = 1;
+  int32 Skip = 2;
+  int32 Take = 3;
+}
+
+message GetDoctorsResponse {
+  int32 Total = 1;
+  repeated PracticeInfo Doctors = 2;
+}
+
+message GetDoctorDetailRequest {
+  string UserId = 1;
+}
+
+message GetDoctorDetailResponse {
+  PracticeInfo;
+}
