@@ -5,6 +5,7 @@ package User;
 service User {
   rpc GetDoctors (GetDoctorsRequest) returns (GetDoctorsResponse) {}
   rpc GetDoctorDetail (GetDoctorDetailRequest) returns (GetDoctorDetailResponse) {}
+  rpc GetRecommendDoctors (GetRecommendDoctorsRequest) returns (GetRecommendDoctorsResponse) {}
 }
 
 message BiLang {
@@ -50,4 +51,14 @@ message GetDoctorDetailRequest {
 
 message GetDoctorDetailResponse {
   PracticeInfo Doctor = 1;
+}
+
+message GetRecommendDoctorsRequest {
+  int32 Skip = 1;
+  int32 Take = 2;
+}
+
+message GetRecommendDoctorsResponse {
+  int32 Total = 1;
+  repeated PracticeInfo Doctors = 2;
 }
