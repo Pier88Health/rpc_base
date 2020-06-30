@@ -26,8 +26,8 @@ message FeedItemDetail {
   string UrlPreview = 6;
   string DateBucket = 7;
   repeated string PictureFileNames = 8;
-  int32 CreatedDate = 9;
-  int32 PublishTime = 10;
+  double CreatedDate = 9;
+  double PublishTime = 10;
   string Note = 11;
   string TitleLang = 12;
   string Title = 13;
@@ -41,6 +41,7 @@ message FeedItemDetail {
   string ArticleSource = 21;
   string OriginalAuthor = 22;
   string CopyrightNotice = 23;
+  string GroupId = 24;
 }
 
 // The request message containing the user's name.

@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+// option java_multiple_files = true;
+// option java_package = "io.grpc.examples.hiworld";
+// option java_outer_classname = "HiWorldProto";
+// option objc_class_prefix = "HLWI";
+
+package User;
+
+service User {
+  rpc GetUsers (GetUsersRequest) returns (GetUsersResponse) {}
+  rpc GetUserDetail (GetUserDetailRequest) returns (GetUserDetailResponse) {}
+}
+
+message BiLang {
+  string en = 1;
+  string zh = 2;
+}
+
+message Doctor {
+  string DoctorId = 1;
+  BiLang DisplayName = 2;
+  double AvatarVersion = 3;
+}
+
+message Patient {
+  string PatientId = 1;
+  BiLang Name = 2;
+  double Birthdate = 3;
+  string Gender = 4;
+  BiLang Country = 5;
+  BiLang State = 6;
+  BiLang City = 7;
+  BiLang District = 8;
+  BiLang Relationship = 9;
+  string UserId = 10;
+}
+message UserInfo {
+  string UserId = 1;
+  string UserName = 2;
+  BiLang NickName = 3;
+  string Status = 4;
+  repeated Patient Patients = 5;
+  double CreatedDate = 6;
+  double AvatarVersion = 7;
+  Doctor RelatedDoctor = 8;
+}
+
+// The request message containing the user's name.
+message GetUsersRequest {
+  string UserName = 1;
+  int32 Skip = 2;
+  int32 Take = 3;
+  string DoctorId = 4;
+  string PatientName = 5;
+  string Checked = 6;
+}
+
+message GetUsersResponse {
+  int32 Total = 1;
+  repeated UserInfo Users = 2;
+}
+
+message GetUserDetailRequest {
+  string UserId = 1;
+}
+
+message GetUserDetailResponse {
+  UserInfo User = 1;
+}

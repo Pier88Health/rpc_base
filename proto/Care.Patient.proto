@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+// option java_multiple_files = true;
+// option java_package = "io.grpc.examples.hiworld";
+// option java_outer_classname = "HiWorldProto";
+// option objc_class_prefix = "HLWI";
+
+package Patient;
+
+service Patient {
+  rpc GetPatientsByDoctorUserId (GetPatientsByDoctorUserIdRequest) returns (GetPatientsByDoctorUserIdResponse) {}
+  rpc GetPatientDetails (DoctorPatientIdPair) returns (PatientInfo) {}
+  rpc GetPendingPatientNumberByDoctor (DoctorUserIdRequest) returns (NumberResponse) {}
+  rpc AcceptPatient (DoctorPatientIdPair) returns (PatientInfo) {}
+  rpc RejectPatient (DoctorPatientIdPair) returns (RejectPatientResponse) {}
+}
+
+message BiLang {
+  string en = 1;
+  string zh = 2;
+}
+
+message PatientInfo {
+  string PatientId = 1;
+  BiLang Name = 2;
+  double Birthdate = 3;
+  string Gender = 4;
+  BiLang Country = 5;
+  BiLang State = 6;
+  BiLang City = 7;
+  BiLang District = 8;
+  string Relationship = 9;
+  string UserId = 10;
+  string PersonalId = 11;
+  string PatientSource = 12;
+  string PhoneNumber = 13;
+  double CreatedDate = 14;
+  string Status = 15;
+}
+
+message DoctorPatientIdPair {
+  string DoctorUserId = 1;
+  string PatientId = 2;
+}
+
+message RejectPatientResponse {
+  string responseTxt = 1;
+}
+
+message NumberResponse {
+  int32 Number = 1;
+}
+
+message DoctorUserIdRequest {
+  string DoctorUserId = 1;
+}
+
+message GetPatientsByDoctorUserIdRequest {
+  string DoctorUserId = 1;
+  string Status = 2;
+  int32 Skip = 3;
+  int32 Take = 4;
+  string SearchTerm = 5;
+}
+
+message GetPatientsByDoctorUserIdResponse {
+  int32 Total = 1;
+  repeated PatientInfo Patients = 2;
+}
