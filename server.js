@@ -21,6 +21,7 @@ class RpcServer{
             protoPath = commom.GetProtoFilePath(this.options.protoFolder, protoFileName),
             packageDefinition,
             proto;
+        assert(protoPath, `${serviceName} proto file not found`);
         packageDefinition = protoLoader.loadSync(
             protoPath,
             {

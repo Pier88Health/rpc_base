@@ -7,6 +7,7 @@ let registry = new ConfigRegistry({ address: "./config.json" }),
     rpcClient = new RpcClient({ registry: registry, protoFolder: "../proto" });
 
 async function start() {
+    let res;
     try {
         res = await rpcClient.invoke({
             serviceName: "Like",
@@ -21,8 +22,6 @@ async function start() {
                 DisplayName: { en: 'Lihoutai-cuizhaoqiang Guan', zh: '管理后台-崔兆强' },
                 SkipExisting: undefined,
                 Admin: undefined,
-                ServiceName: 'Like',
-                MethodName: 'Like'
             }
         });
     } catch (err) {

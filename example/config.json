@@ -1,5 +1,8 @@
 {
     "MedLinc.Like": [
         "localhost:8002"
+    ],
+    "MedLinc.Share": [
+        "localhost:8002"
     ]
 }

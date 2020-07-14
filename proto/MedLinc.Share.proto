@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+// option java_multiple_files = true;
+// option java_package = "io.grpc.examples.hiworld";
+// option java_outer_classname = "HiWorldProto";
+// option objc_class_prefix = "HLWI";
+
+package Share;
+
+// The greeting service definition.
+service Share {
+  rpc Share (ShareRequest) returns (ShareResponse) {}
+}
+
+message BiLang {
+  string en = 1;
+  string zh = 2;
+  string fr = 3;
+}
+
+// The request message containing the user's name.
+message ShareRequest {
+  string EntityType = 1;
+  string EntityId = 2;
+  string GroupId = 3;
+  string UserId = 4;
+  string MemberId = 5;
+  BiLang DisplayName = 6;
+  bool SkipExisting = 7;
+  bool Admin = 8;
+}
+
+message ShareResponse {
+  string p8Id = 1;
+  string EntityType = 2;
+  string EntityId = 3;
+  string GroupId = 4;
+  string MemberId = 5;
+  string CreatedBy = 6;
+  BiLang DisplayName = 7;
+  string Error = 8;
+}
