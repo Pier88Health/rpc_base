@@ -8,8 +8,6 @@ function buildClientKey(params) {
     return `${params.namespace}${params.serviceName}@${params.host}`;
 }
 
-
-
 const defaultOptions = {
     protoFolder: __dirname + '/proto/'
 }
@@ -39,6 +37,7 @@ class RpcClient {
         } else {
             addressManager = this.addressManagerMap.get(serviceKey);
         }
+        assert(protoPath, `${serviceName} proto file not found`);
         this.registry.subscribe({serviceName: serviceKey}, (addresses) => {
             addressManager.addressList = addresses;
         });
