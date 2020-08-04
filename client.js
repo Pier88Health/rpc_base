@@ -34,14 +34,14 @@ class RpcClient {
         if (!this.addressManagerMap.has(serviceKey)) {
             addressManager = new AddressManager({key: serviceKey});
             this.addressManagerMap.set(serviceKey, addressManager);
+            this.registry.subscribe({serviceName: serviceKey}, (addresses) => {
+                addressManager.addressList = addresses;
+            });
+            await addressManager.ready();
         } else {
             addressManager = this.addressManagerMap.get(serviceKey);
         }
         assert(protoPath, `${serviceName} proto file not found`);
-        this.registry.subscribe({serviceName: serviceKey}, (addresses) => {
-            addressManager.addressList = addresses;
-        });
-        await addressManager.ready();
         address = addressManager.select();
         if (!address) {
             return null;
