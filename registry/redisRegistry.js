@@ -33,6 +33,10 @@ class RedisRegistry extends RegistryBase {
     _init() {
         this.redisClient = redis.createClient(this.options.port, this.options.host);
         this.subClient = redis.createClient(this.options.port, this.options.host);
+        if (options.password) {
+            this.redisClient.auth(options.password);
+            this.subClient.auth(options.password);
+        }
         this.redisClient.on('ready', () => {
             this._ready = true;
         });
