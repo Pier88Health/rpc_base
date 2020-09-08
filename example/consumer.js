@@ -1,9 +1,11 @@
-const RpcClient = require('rpc_base').RpcClient,
-    // RedisRegistry = require('rpc_base').RedisRegistry;
-    ConfigRegistry = require('rpc_base').ConfigRegistry;
+const RpcClient = require('../index.js').RpcClient,
+    RedisRegistry = require('../index.js').RedisRegistry;
+    ConfigRegistry = require('../index.js').ConfigRegistry;
+    ZookeeperRegistry = require('../index.js').ZookeeperRegistry;
 
 // let registry = new RedisRegistry({ address: "localhost:6379" }),
-let registry = new ConfigRegistry({ address: "./config.json" }), 
+// let registry = new ConfigRegistry({ address: "./config.json" }), 
+let registry = new ZookeeperRegistry({ address: "localhost:2181" }),
     rpcClient = new RpcClient({ registry: registry, protoFolder: "../proto" });
 
 async function start() {
