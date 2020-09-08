@@ -52,6 +52,12 @@ class ZookeeperRegistry extends RegistryBase {
         }
     }
 
+    _reRegister() {
+         this.registerMap.values().forEach(config => {
+            this.register(config);
+         });
+    }
+
     async _subscribe(config, listener) {
         assert(config && config.serviceName, config.namespace, '[ZookeeperRegistry] register(config) config.serviceName and config.namespace is required');
         const serviceKey = buildKey(config);
@@ -108,7 +114,7 @@ class ZookeeperRegistry extends RegistryBase {
         const servicePath = buildServicePath(config);
         const path = servicePath + "/" + urlencode.encode(config.address);
         await this.zookeeperClient.mkdirp(servicePath);
-        this.registerMap.set(path, config.address);
+        this.registerMap.set(path, config);
         try {
             if (await this.zookeeperClient.exists(path)) {
                 await this._remove(path);
@@ -124,7 +130,7 @@ class ZookeeperRegistry extends RegistryBase {
         assert(config.address, '[RedisRegistry] register(config) config.host is required');
         const servicePath = buildServicePath(config),
             path = servicePath + "/" + urlencode.encode(config.address);
-        this.registerMap.delete(path, config.address);
+        this.registerMap.delete(path);
         await this._remove(path);
     }
 }
