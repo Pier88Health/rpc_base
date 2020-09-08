@@ -30,17 +30,17 @@ class ConfigRegistry extends RegistryBase {
         return address;
     }
 
-    unSubscribe(config, listener) {
+    _unSubscribe(config, listener) {
         assert(config && config.serviceName, '[ConfigRegistry] unSubscribe(config, listener) config.serviceName is required');
-        const interfaceName = config.interfaceName;
+        const serviceName = config.serviceName;
 
         if (listener) {
-            this.removeListener(interfaceName, listener);
+            this.removeListener(serviceName, listener);
         } else {
-            this.removeAllListeners(interfaceName);
+            this.removeAllListeners(serviceName);
         }
-        if (this.listenerCount(interfaceName) === 0) {
-            this._subscribeMap.delete(interfaceName);
+        if (this.listenerCount(serviceName) === 0) {
+            this._subscribeMap.delete(serviceName);
         }
     }
 

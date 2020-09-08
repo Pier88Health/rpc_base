@@ -1,12 +1,13 @@
 const assert = require('assert'),
     zookeeper = require('zookeeper-cluster-client'),
     urlencode = require("urlencode"),
+    commom = require("../lib/common"),
     CreateMode = zookeeper.CreateMode,
     RegistryBase = require("./base.js"),
     EMPTY = Buffer.from('');
 
 function buildKey(config) {
-    return `${config.namespace}.${config.serviceName}`;
+    return commom.BuildServiceKey(config.namespace, config.serviceName);
 }
 
 class ZookeeperRegistry extends RegistryBase {
@@ -35,7 +36,11 @@ class ZookeeperRegistry extends RegistryBase {
     }
 
     buildServicePath(config) {
-        return this.rootPath + `${config.namespace}.${config.serviceName}` + '/addresses';
+        let serviceName = config.serviceName;
+        if (serviceName.indexOf(".") === -1) {
+            serviceName = buildKey(config);
+        }
+        return this.rootPath + serviceName + '/addresses';
     }
     
     buildConsumerPath(config) {
@@ -60,17 +65,16 @@ class ZookeeperRegistry extends RegistryBase {
     }
 
     async _subscribe(config, listener) {
-        assert(config && config.serviceName, config.namespace, '[ZookeeperRegistry] register(config) config.serviceName and config.namespace is required');
-        const serviceKey = buildKey(config);
-
+        assert(config && config.serviceName, '[ZookeeperRegistry] register(config) config.serviceName and config.namespace is required');
+        const serviceKey = config.serviceName;
         if (!this.subscribeMap.has(serviceKey)) {
             this.subscribeMap.set(serviceKey, null);
             const servicePath = this.buildServicePath(config);
-            await this.zookeeperClient.mkdirp(servicePath)
+            await this.zookeeperClient.mkdirp(servicePath);
+            
             this.zookeeperClient.watchChildren(servicePath, (err, children) => {
                 if (err) {
-                    this.emit('error', err);
-                    return;
+                    throw err;
                 }
                 const addressList = children.map(url => urlencode.decode(url));
                 this.subscribeMap.set(serviceKey, addressList);
@@ -80,15 +84,15 @@ class ZookeeperRegistry extends RegistryBase {
             const consumerPath = this.buildConsumerPath(config);
             const consumerUrl = `rpc://pid=${process.pid}&time=${Date.now()}`;
             const path = consumerPath + '/' + urlencode.encode(consumerUrl);
-            this._zkClient.mkdirp(consumerPath)
+            this.zookeeperClient.mkdirp(consumerPath)
                 .then(() => {
-                    return this._zkClient.create(path, EMPTY, CreateMode.EPHEMERAL);
+                    return this.zookeeperClient.create(path, EMPTY, CreateMode.EPHEMERAL);
                 })
                 .catch(err => {
                     console.warn('[ZookeeperRegistry] create consumerPath: %s failed, caused by %s', path, err.message);
                 });
         } else {
-            const addressList = this._subscribeMap.get(serviceKey);
+            const addressList = this.subscribeMap.get(serviceKey);
             if (addressList) {
                 setImmediate(() => { listener(addressList); });
             }
