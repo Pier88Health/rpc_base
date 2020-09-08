@@ -2,18 +2,11 @@ const assert = require('assert'),
     zookeeper = require('zookeeper-cluster-client'),
     urlencode = require("urlencode"),
     CreateMode = zookeeper.CreateMode,
-    RegistryBase = require("./base.js");
+    RegistryBase = require("./base.js"),
+    EMPTY = Buffer.from('');
 
 function buildKey(config) {
     return `${config.namespace}.${config.serviceName}`;
-}
-
-function buildServicePath(config) {
-    return this.rootPath + `${config.namespace}.${config.serviceName}` + '/addresses';
-}
-
-function buildConsumerPath(config) {
-    return this.rootPath + `${config.namespace}.${config.serviceName}` + '/consumers';
 }
 
 class ZookeeperRegistry extends RegistryBase {
@@ -41,6 +34,14 @@ class ZookeeperRegistry extends RegistryBase {
         });
     }
 
+    buildServicePath(config) {
+        return this.rootPath + `${config.namespace}.${config.serviceName}` + '/addresses';
+    }
+    
+    buildConsumerPath(config) {
+        return this.rootPath + `${config.namespace}.${config.serviceName}` + '/consumers';
+    }
+
     async _remove(path) {
         try {
             await this.zookeeperClient.remove(path);
@@ -53,7 +54,7 @@ class ZookeeperRegistry extends RegistryBase {
     }
 
     _reRegister() {
-         this.registerMap.values().forEach(config => {
+         this.registerMap.forEach(config => {
             this.register(config);
          });
     }
@@ -62,9 +63,9 @@ class ZookeeperRegistry extends RegistryBase {
         assert(config && config.serviceName, config.namespace, '[ZookeeperRegistry] register(config) config.serviceName and config.namespace is required');
         const serviceKey = buildKey(config);
 
-        if (!this._subscribeMap.has(serviceKey)) {
-            this._subscribeMap.set(serviceKey, null);
-            const servicePath = this._buildProviderPath(config);
+        if (!this.subscribeMap.has(serviceKey)) {
+            this.subscribeMap.set(serviceKey, null);
+            const servicePath = this.buildServicePath(config);
             await this.zookeeperClient.mkdirp(servicePath)
             this.zookeeperClient.watchChildren(servicePath, (err, children) => {
                 if (err) {
@@ -72,11 +73,11 @@ class ZookeeperRegistry extends RegistryBase {
                     return;
                 }
                 const addressList = children.map(url => urlencode.decode(url));
-                this._subscribeMap.set(serviceKey, addressList);
+                this.subscribeMap.set(serviceKey, addressList);
                 this.emit(serviceKey, addressList);
             });
 
-            const consumerPath = buildConsumerPath(config);
+            const consumerPath = this.buildConsumerPath(config);
             const consumerUrl = `rpc://pid=${process.pid}&time=${Date.now()}`;
             const path = consumerPath + '/' + urlencode.encode(consumerUrl);
             this._zkClient.mkdirp(consumerPath)
@@ -111,7 +112,7 @@ class ZookeeperRegistry extends RegistryBase {
     async _register(config) {
         assert(config && config.serviceName, config.namespace, '[ZookeeperRegistry] register(config) config.serviceName and config.namespace is required');
         assert(config.address, '[RedisRegistry] register(config) config.host is required');
-        const servicePath = buildServicePath(config);
+        const servicePath = this.buildServicePath(config);
         const path = servicePath + "/" + urlencode.encode(config.address);
         await this.zookeeperClient.mkdirp(servicePath);
         this.registerMap.set(path, config);
@@ -128,7 +129,7 @@ class ZookeeperRegistry extends RegistryBase {
     async _unRegister(config) {
         assert(config && config.serviceName, config.namespace, '[ZookeeperRegistry] register(config) config.serviceName and config.namespace is required');
         assert(config.address, '[RedisRegistry] register(config) config.host is required');
-        const servicePath = buildServicePath(config),
+        const servicePath = this.buildServicePath(config),
             path = servicePath + "/" + urlencode.encode(config.address);
         this.registerMap.delete(path);
         await this._remove(path);
