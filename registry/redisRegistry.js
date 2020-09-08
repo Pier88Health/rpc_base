@@ -1,12 +1,20 @@
 const assert = require('assert'),
     redis = require('redis'),
+    common = require("../lib/common.js"),
     {promisify} = require('util'),
     RegistryBase = require("./base.js");
 
 function buildKey(config) {
-    return `${config.serviceName}@P88Health`;
+    return common.BuildServiceKey(config.namespace, config.serviceName);
 }
 
+function buildServiceKey(config) {
+    let serviceName = config.serviceName;
+    if (serviceName.indexOf(".") === -1) {
+        serviceName = buildKey(config);
+    }
+    return serviceName;
+}
 class RedisRegistry extends RegistryBase {
     constructor(options = {}) {
         assert(options.address, '[RedisRegistry] options.address is required');
@@ -17,14 +25,18 @@ class RedisRegistry extends RegistryBase {
         assert(host && port, '[RedisRegistry] options.address must be "host:port"');
         super();
         this.options = options;
-        this._subscribeMap = new Map(); // <interfaceName, addressList>
-        this._registerMap = new Map();
+        this.subscribeMap = new Map(); // <interfaceName, addressList>
+        this.registerMap = new Map();
         this._init();
     }
 
     _init() {
         this.redisClient = redis.createClient(this.options.port, this.options.host);
         this.subClient = redis.createClient(this.options.port, this.options.host);
+        if (options.password) {
+            this.redisClient.auth(options.password);
+            this.subClient.auth(options.password);
+        }
         this.redisClient.on('ready', () => {
             this._ready = true;
         });
@@ -33,41 +45,41 @@ class RedisRegistry extends RegistryBase {
 
     async _subscribe(config, listener) {
         assert(config && config.serviceName, '[ConfigRegistry] subscribe(config, listener) config.ServiceName is required');
-        const serviceName = config.serviceName,
-            key = buildKey(config);
+        const serviceKey = buildServiceKey(config);
         let addressList;
-        if (this._subscribeMap.has(serviceName)) {
-            addressList = this._subscribeMap.get(serviceName);
-            this.emit(serviceName, addressList);
+        console.log(serviceKey);
+        if (this.subscribeMap.has(serviceKey)) {
+            addressList = this.subscribeMap.get(serviceKey);
+            this.emit(serviceKey, addressList);
             return;
         }
-        addressList = await this.redisClient.smembersAsync(key);
+        addressList = await this.redisClient.smembersAsync(serviceKey);
         if (Array.isArray(addressList)) {
-            this._subscribeMap.set(serviceName, addressList);
+            this.subscribeMap.set(serviceKey, addressList);
             listener(addressList);
         }
-        this.subClient.subscribe(key);
+        this.subClient.subscribe(serviceKey);
         this.subClient.on("message", async (channel, message) => {
             addressList = await this.redisClient.smembersAsync(key);
             if (Array.isArray(addressList)) {
-                this._subscribeMap.set(serviceName, addressList);
-                this.emit(serviceName, addressList);
+                this.subscribeMap.set(serviceKey, addressList);
+                this.emit(serviceKey, addressList);
             }
             console.log(`${channel} add or remove service provider "${message}"`);
         });
-        this.on(serviceName, listener);
+        this.on(serviceKey, listener);
     }
 
     _unSubscribe(config, listener) {
         assert(config && config.serviceName, '[ConfigRegistry] unSubscribe(config, listener) config.serviceName is required');
-        const interfaceName = config.interfaceName;
+        const serviceKey = buildServiceKey(config);
         if (listener) {
-            this.removeListener(interfaceName, listener);
+            this.removeListener(serviceKey, listener);
         } else {
-            this.removeAllListeners(interfaceName);
+            this.removeAllListeners(serviceKey);
         }
-        if (this.listenerCount(interfaceName) === 0) {
-            this._subscribeMap.delete(interfaceName);
+        if (this.listenerCount(serviceKey) === 0) {
+            this.subscribeMap.delete(serviceKey);
         }
     }
 
@@ -75,7 +87,7 @@ class RedisRegistry extends RegistryBase {
         assert(config && config.serviceName, '[RedisRegistry] register(config) config.serviceName is required');
         assert(config.address, '[RedisRegistry] register(config) config.host is required');
         let key = buildKey(config);
-        this._registerMap.set(`${config.serviceName}@${config.address}`, config.address);
+        this.registerMap.set(key, config.address);
         this.redisClient.sadd(key, config.address);
         this.redisClient.publish(key, config.address);
     }
@@ -84,7 +96,7 @@ class RedisRegistry extends RegistryBase {
         assert(config && config.serviceName, '[ConfigRegistry] register(config) config.serviceName is required');
         assert(config.address, '[configRegistry] register(config) config.host is required');
         let key = buildKey(config);
-        this._registerMap.delete(`${config.serviceName}@${config.address}`);
+        this.registerMap.delete(key);
         this.redisClient.srem(key, config.address);
         this.redisClient.publish(key, config.address);
     }
