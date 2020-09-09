@@ -33,7 +33,7 @@ class RedisRegistry extends RegistryBase {
     _init() {
         this.redisClient = redis.createClient(this.options.port, this.options.host);
         this.subClient = redis.createClient(this.options.port, this.options.host);
-        if (options.password) {
+        if (this.options.password) {
             this.redisClient.auth(options.password);
             this.subClient.auth(options.password);
         }
@@ -60,7 +60,7 @@ class RedisRegistry extends RegistryBase {
         }
         this.subClient.subscribe(serviceKey);
         this.subClient.on("message", async (channel, message) => {
-            addressList = await this.redisClient.smembersAsync(key);
+            addressList = await this.redisClient.smembersAsync(serviceKey);
             if (Array.isArray(addressList)) {
                 this.subscribeMap.set(serviceKey, addressList);
                 this.emit(serviceKey, addressList);
