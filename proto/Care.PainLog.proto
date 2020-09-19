@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+// option java_multiple_files = true;
+// option java_package = "io.grpc.examples.hiworld";
+// option java_outer_classname = "HiWorldProto";
+// option objc_class_prefix = "HLWI";
+
+package PainLog;
+
+service PainLog {
+    rpc GetPainLogs(GetPainLogsRequest) returns (GetPainLogsResponse) {}
+    rpc GetPainLogDetail(GetPainLogDetailRequest) returns (PainLogItem) {}
+}
+
+message BiLang {
+  string en = 1;
+  string zh = 2;
+}
+
+message GetPainLogsRequest {
+    string PatientId = 1;
+    int32 Take = 2;
+    int32 Skip = 3;
+}
+
+message GetPainLogDetailRequest {
+    string PainLogId = 1;
+}
+
+message Patient {
+    string PatientId = 1;
+    BiLang Name = 2;
+}
+
+message Distracting {
+    string Index = 1;
+    string DisplayText = 2;
+}
+
+message PainSite {
+    BiLang BodyMap = 1;
+    repeated BiLang Symptoms = 2;
+    Distracting Distracting = 3;
+}
+
+message Medication {
+    string MedicineId = 1;
+    BiLang Name = 2;
+}
+message PainLogItem {
+    string PainLogId = 1;
+    Patient Patient = 2;
+    string UserId = 3;
+    repeated PainSite PainSites = 4;
+    Distracting WholeDistracting = 5;
+    Distracting ActivityLevel = 6;
+    repeated BiLang Relief = 7;
+    repeated BiLang Triggers = 8;
+    repeated BiLang Treatments = 9;
+    repeated Medication Medications = 10;
+    repeated BiLang Moods = 11;
+    BiLang Sleep = 12;
+    string Notes = 13;
+    string DateBucket = 14;
+    double CreatedDate = 15;
+}
+
+message GetPainLogsResponse {
+    repeated PainLogItem PainLogs = 1;
+    string Total = 2;
+}

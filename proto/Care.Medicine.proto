@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+// option java_multiple_files = true;
+// option java_package = "io.grpc.examples.hiworld";
+// option java_outer_classname = "HiWorldProto";
+// option objc_class_prefix = "HLWI";
+
+package Medicine;
+
+service Medicine {
+  rpc GetPrimaryMedCategory (GetPrimaryMedCategoryRequest) returns (GetPrimaryMedCategoryResponse) {}
+  rpc GetSecondMedCategoryByPid (GetSecondMedCategoryByPidRequest) returns (GetSecondMedCategoryByPidResponse) {}
+  rpc GetMedicineByCategoryId (GetMedicineByCategoryIdRequest) returns (GetMedicineByCategoryIdResponse) {}
+  rpc MedicineSearch (MedicineSearchRequest) returns (MedicineSearchResponse) {}
+  rpc GetMedicineDetail (GetMedicineDetailRequest) returns (MedicineLib) {}
+}
+
+message BiLang {
+  string en = 1;
+  string zh = 2;
+}
+
+message Category {
+  string Title = 1;
+  string Pandect = 2;
+  string Level = 3;
+  string PrimaryId = 4;
+  string SecondaryId = 5;
+  bool HasSecondary = 6;
+  int32 MedicineCount = 7;
+}
+
+message MedicineLib {
+  string p8Id = 1;
+  BiLang Name = 2;
+  string Introduction = 3;
+  string Pharmacokinetics = 4;
+  string Dosage = 5;
+  string Indications = 6;
+  string Contraindications = 7;
+  string Warning = 8;
+  string AdverseReactions = 9;
+  string Frontiers = 10;
+  string Reference = 11;
+}
+
+message GetPrimaryMedCategoryRequest {
+  int32 Skip = 1;
+  int32 Take = 2;
+}
+
+message GetPrimaryMedCategoryResponse {
+  repeated Category Categories = 1;
+  int32 Total = 2;
+}
+
+message GetSecondMedCategoryByPidRequest {
+  int32 Skip = 1;
+  int32 Take = 2;
+  string Level = 3;
+  string PrimaryId = 4;
+}
+
+message GetSecondMedCategoryByPidResponse {
+  repeated Category Categories = 1;
+  int32 Total = 2;
+}
+
+message GetMedicineByCategoryIdRequest {
+  int32 Skip = 1;
+  int32 Take = 2;
+  string PrimaryId = 3;
+  string SecondaryId = 4;
+}
+
+message GetMedicineByCategoryIdResponse {
+  repeated MedicineLib Medicines = 1;
+}
+
+message MedicineSearchRequest {
+  int32 Skip = 1;
+  int32 Take = 2;
+  string SearchTerm = 3;
+}
+
+message MedicineSearchResponse {
+  repeated MedicineLib Medicines = 1;
+  repeated string Highlight = 2;
+}
+
+message GetMedicineDetailRequest {
+  string  MedicineId = 1;
+}

@@ -1,0 +1,128 @@
+syntax = "proto3";
+
+// option java_multiple_files = true;
+// option java_package = "io.grpc.examples.hiworld";
+// option java_outer_classname = "HiWorldProto";
+// option objc_class_prefix = "HLWI";
+
+package Order;
+
+service Order {
+    rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse) {}
+    rpc GetOrderDetail(GetOrderDetailRequest) returns (GetOrderDetailResponse) {}
+    rpc CancellOrder(CancellOrderRequest) returns (CancellOrderResponse) {}
+    rpc GetOrderDetailByItemId(GetOrderDetailByItemIdRequest) returns (GetOrderDetailResponse) {}
+}
+
+message BiLang {
+  string en = 1;
+  string zh = 2;
+}
+
+message GetOrdersRequest {
+    string PatronUserName = 1;
+    string PatientName = 2;
+    string DoctorName = 3;
+    double StartDate = 4;
+    double EndDate = 5;
+    string Status = 6;
+    int32 Take = 7;
+    int32 Skip = 8;
+    string ConsultationStatus = 9;
+}
+
+message OrderItem {
+    string OrderId = 1;
+    string FriendlyId = 2;
+    string ItemType = 3;
+    string ItemId = 4;
+    int32 Cost = 5;
+    string CostUnit = 6;
+    string PatronUserName = 7;
+    string Status = 8;
+    double CreatedDate = 9;
+    BiLang PatientName = 10;
+    double PatientAge = 11;
+    string PatientGender = 12;
+    BiLang DoctorName = 13;
+    string Description = 14;
+    string ConsultationStatus = 15;
+    string OrderSerialNumber = 16;
+}
+
+message Affiliation {
+    BiLang Name = 1;
+    string Id = 2;
+    string HospitalLevel = 3;
+
+}
+
+message Department {
+    BiLang Name = 1;
+    string Id = 2;
+}
+
+message Doctor {
+    BiLang DisplayName = 1;
+    Affiliation Affiliation = 2;
+    Department Department = 3;
+    Department SubDepartment = 4;
+    BiLang Title = 5;
+    string AvatarFileName = 6;
+    double AvatarVersion = 7;
+    string UserId = 8;
+}
+
+message Patient {
+    BiLang Name = 1;
+    string PatientId = 2;
+    string Gender = 3;
+    double Birthdate = 4;
+}
+message Consultation {
+    string ConsultationId = 1;
+    string Type = 2;
+    string Description = 3;
+    string Status = 4;
+    double CreatedDate = 5;
+    repeated string PictureFileNames = 6;
+    Patient Patient = 7;
+    Doctor Doctor = 8;
+    string DoctorAdvice = 9;
+    string MedicationRecommendation = 10;
+    string Diagnosis = 11;
+    string DateBucket = 12;
+}
+
+message GetOrdersResponse {
+    repeated OrderItem Orders = 1;
+    int32 Total = 2;
+}
+
+message GetOrderDetailRequest {
+    string OrderId = 1;
+}
+
+message GetOrderDetailByItemIdRequest {
+    string ItemId = 1;
+}
+
+message CancellOrderRequest {
+    string OrderId = 1;
+}
+
+message CancellOrderResponse{
+    string Status = 1;
+}
+
+message GetOrderDetailResponse {
+    string OrderId = 1;
+    string Status = 2;
+    string ItemType = 3;
+    string TotalCost = 4;
+    string Balance = 5;
+    string FriendlyId = 6;
+    double CreatedDate = 7;
+    Consultation Consultation = 8;
+    string OrderSerialNumber = 9;
+}

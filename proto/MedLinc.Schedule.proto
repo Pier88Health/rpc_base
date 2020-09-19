@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package Schedule;
+
+service Schedule {
+  rpc CreateSchedule (CreateScheduleRequest) returns (CreateScheduleResponse) {}
+  rpc CancelSchedule (CancelScheduleRequest) returns (CancelScheduleResponse) {}
+}
+
+message BiLang {
+  string en = 1;
+  string zh = 2;
+}
+
+message Payload {
+  string ConsultationId = 1;
+  string DoctorUserId = 2;
+  string Reason = 3;
+}
+
+message CreateScheduleResponse {
+  string Status = 1;
+}
+
+message CancelScheduleResponse {
+  string Status = 1;
+}
+
+message CreateScheduleRequest {
+  string ScheduleType = 1;
+  string EntityId = 2;
+  string PeriodType = 3;
+  double FirstTriggerDate = 4;
+  double NumPeriod = 5;
+  Payload Payload = 6;
+}
+
+message CancelScheduleRequest {
+  string ScheduleType = 1;
+  string EntityId = 2;
+}

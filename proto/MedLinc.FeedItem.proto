@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package FeedItem;
+
+service FeedItem {
+  rpc GetNewsFeedByTagIdsForWmp (GetNewsFeedByTagIdsForWmpRequest) returns (GetNewsFeedByTagIdsForWmpResponse) {}
+  rpc GetFeedItemDetail (GetFeedItemDetailRequest) returns (GetFeedItemDetailResponse) {}
+  rpc GetWmpFeedTagIds (GetWmpFeedTagIdsRequest) returns (GetWmpFeedTagIdsResponse) {}
+}
+
+message BiLang {
+  string en = 1;
+  string zh = 2;
+}
+
+message MutiPart {
+  string Id = 1;
+  BiLang Name = 2;
+}
+
+message FeedItemDetail {
+  string FeedItemId = 1;
+  string EntityType = 2;
+  string EntityId = 3;
+  string Status = 4;
+  string Url = 5;
+  string UrlPreview = 6;
+  string DateBucket = 7;
+  repeated string PictureFileNames = 8;
+  double CreatedDate = 9;
+  double PublishTime = 10;
+  string Note = 11;
+  string TitleLang = 12;
+  string Title = 13;
+  string ContentLang = 14;
+  string ContentSummary = 15;
+  string HtmlContent = 16;
+  string RawContent = 17;
+  string CoverImageFileName = 18;
+  string CreatorType = 19;
+  string ArticleType = 20;
+  string ArticleSource = 21;
+  string OriginalAuthor = 22;
+  string CopyrightNotice = 23;
+  string GroupId = 24;
+}
+
+// The request message containing the user's name.
+message GetNewsFeedByTagIdsForWmpRequest {
+  string SearchTerm = 1;
+  int32 Skip = 2;
+  int32 Take = 3;
+}
+
+message GetNewsFeedByTagIdsForWmpResponse {
+  repeated FeedItemDetail FeedItems = 1;
+}
+
+message GetFeedItemDetailRequest {
+  string FeedItemId = 1;
+  bool RefreshFeedDetail = 2;
+}
+
+message GetFeedItemDetailResponse {
+  FeedItemDetail FeedItem = 1;
+}
+
+message GetWmpFeedTagIdsRequest {}
+
+message GetWmpFeedTagIdsResponse {
+  repeated string TagIds = 1;
+}
+
