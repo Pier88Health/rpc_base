@@ -21,10 +21,12 @@ message GetPainLogsRequest {
     string PatientId = 1;
     int32 Take = 2;
     int32 Skip = 3;
+    string DoctorId = 4;
 }
 
 message GetPainLogDetailRequest {
     string PainLogId = 1;
+    string DoctorId = 2;
 }
 
 message Patient {
