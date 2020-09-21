@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+// option java_multiple_files = true;
+// option java_package = "io.grpc.examples.hiworld";
+// option java_outer_classname = "HiWorldProto";
+// option objc_class_prefix = "HLWI";
+
+package Consultation;
+
+service Consultation {
+  rpc GetConsultationsByDoctorUserId (GetConsultationsByDoctorUserIdRequest) returns (GetConsultationsByDoctorUserIdResponse) {}
+  rpc GetConsultationById (DoctorConsultationIdPair) returns (ConsultationInfo) {}
+  rpc Accept (DoctorConsultationIdPair) returns (ConsultationInfo) {}
+  rpc Reject (DoctorConsultationIdPair) returns (ConsultationInfo) {}
+  rpc Close (CancelCloseRequest) returns (ConsultationInfo) {}
+  rpc Cancel (CancelCloseRequest) returns (ConsultationInfo) {}
+  rpc SaveDoctorAdvice (SaveDoctorAdviceRequest) returns (ConsultationInfo) {}
+}
+
+message DoctorConsultationIdPair {
+  string DoctorUserId = 1;
+  string ConsultationId = 2;
+}
+
+message CancelCloseRequest {
+  string DoctorUserId = 1;
+  string ConsultationId = 2;
+  string Reason = 3;
+}
+
+message BiLang {
+  string en = 1;
+  string zh = 2;
+}
+
+message PatientInfo {
+  string PatientId = 1;
+  BiLang Name = 2;
+  double Birthdate = 3;
+  string Gender = 4;
+}
+
+message MedicineObj {
+  string MedicineId = 1;
+  BiLang MedicineName = 2;
+}
+
+message ConsultationInfo {
+  string p8Id = 1;
+  PatientInfo Patient = 3;
+  string Description = 4;
+  string DateBucket = 5;
+  repeated string PictureFileNames = 6;
+  string Status = 7;
+  double CreatedDate = 8;
+  string DoctorAdvice = 9;
+  string MedicationRecommendation = 10;
+  string Diagnosis = 11;
+  repeated MedicineObj MedicineArray = 12;
+}
+
+message GetConsultationsByDoctorUserIdRequest {
+  string DoctorUserId = 1;
+  string Status = 2;
+  int32 Skip = 3;
+  int32 Take = 4;
+  string SearchTerm = 5;
+}
+
+message GetConsultationsByDoctorUserIdResponse {
+  int32 Total = 1;
+  repeated ConsultationInfo Consultations = 2;
+}
+
+message SaveDoctorAdviceRequest {
+  string UserId = 1;
+  string ConsultationId = 2;
+  string DoctorAdvice = 3;
+  string MedicationRecommendation = 4;
+  string Diagnosis = 5;
+  repeated MedicineObj MedicineArray = 6;
+}

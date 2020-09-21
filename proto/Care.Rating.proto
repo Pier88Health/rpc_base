@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+// option java_multiple_files = true;
+// option java_package = "io.grpc.examples.hiworld";
+// option java_outer_classname = "HiWorldProto";
+// option objc_class_prefix = "HLWI";
+
+package Rating;
+
+service Rating {
+    rpc GetRatings(GetRatingsRequest) returns (GetRatingsResponse) {}
+    rpc GetRatingDetail(GetRatingDetailRequest) returns (GetRatingDetailResponse) {}
+    rpc AcceptRating(UpdateStatusRequest) returns (GetRatingDetailResponse) {}
+    rpc RejectRating(UpdateStatusRequest) returns (GetRatingDetailResponse) {}
+}
+
+message BiLang {
+  string en = 1;
+  string zh = 2;
+}
+
+message GetRatingsRequest {
+    string UserName = 1;
+    string DoctorName = 2;
+    string Comment = 3;
+    double StartDate = 4;
+    double EndDate = 5;
+    string Status = 6;
+    int32 Take = 7;
+    int32 Skip = 8;
+    string Source = 9;
+}
+
+message RatingItem {
+    string RatingId = 1;
+    string Comment = 2;
+    string Score = 3;
+    BiLang CreatorDisplayName = 4;
+    BiLang DoctorDisplayName = 5;
+    string Source = 6;
+    string UserName = 7;
+    string Status = 8;
+    double CreatedDate = 9;
+}
+
+message Affiliation {
+    BiLang Name = 1;
+    string Id = 2;
+    string HospitalLevel = 3;
+
+}
+
+message Department {
+    BiLang Name = 1;
+    string Id = 2;
+}
+
+message Doctor {
+    BiLang DisplayName = 1;
+    Affiliation Affiliation = 2;
+    Department Department = 3;
+    Department SubDepartment = 4;
+    BiLang Title = 5;
+    string AvatarFileName = 6;
+    double AvatarVersion = 7;
+    string UserId = 8;
+}
+
+message GetRatingsResponse {
+    repeated RatingItem Ratings = 1;
+    int32 Total = 2;
+}
+
+message GetRatingDetailRequest {
+    string RatingId = 1;
+}
+
+message GetRatingDetailResponse {
+    string RatingId = 1;
+    string Comment = 2;
+    string Score = 3;
+    string Source = 6;
+    string UserName = 7;
+    string Status = 8;
+    double CreatedDate = 9;
+    Doctor Doctor = 10;
+    string ItemId = 11;
+}
+
+message UpdateStatusRequest {
+    string RatingId = 1;
+}

@@ -5,6 +5,7 @@ package User;
 service User {
   rpc GetDoctors (GetDoctorsRequest) returns (GetDoctorsResponse) {}
   rpc GetDoctorDetail (GetDoctorDetailRequest) returns (GetDoctorDetailResponse) {}
+  rpc GetDoctorPracticeInfo (GetDoctorPracticeInfoRequest) returns (GetDoctorDetailResponse) {}
   rpc GetRecommendDoctors (GetRecommendDoctorsRequest) returns (GetRecommendDoctorsResponse) {}
 }
 
@@ -18,19 +19,27 @@ message MutiPart {
   BiLang Name = 2;
 }
 
+message Affiliation {
+  string Id = 1;
+  BiLang Name = 2;
+  string HospitalLevel = 3;
+}
+
 message PracticeInfo {
   string UserId = 1;
   string AvatarFileName = 2;
   double AvatarVersion = 3;
   BiLang Expertise = 4;
   BiLang DisplayName = 5;
-  MutiPart Affiliation = 6;
+  Affiliation Affiliation = 6;
   MutiPart Department = 7;
   MutiPart SubDepartment = 8;
   BiLang Title = 9;
   bool InquiryEnabled = 10;
   int32 InquiryRate = 11;
   bool CheckInEnabled = 12;
+  string UserName = 13;
+  string p8Id = 14;
 }
 
 // The request message containing the user's name.
@@ -38,11 +47,19 @@ message GetDoctorsRequest {
   string PracticeSearchTerm = 1;
   int32 Skip = 2;
   int32 Take = 3;
+  repeated string UserIds = 4;
+  bool SortByName = 5;
+  bool InquiryEnabled = 6;
+  repeated string ExcludeUserIds = 7;
 }
 
 message GetDoctorsResponse {
   int32 Total = 1;
   repeated PracticeInfo Doctors = 2;
+}
+
+message GetDoctorPracticeInfoRequest {
+  string PracticeInfoId = 1;
 }
 
 message GetDoctorDetailRequest {
@@ -56,6 +73,7 @@ message GetDoctorDetailResponse {
 message GetRecommendDoctorsRequest {
   int32 Skip = 1;
   int32 Take = 2;
+  string PracticeSearchTerm = 3;
 }
 
 message GetRecommendDoctorsResponse {

@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+// option java_multiple_files = true;
+// option java_package = "io.grpc.examples.hiworld";
+// option java_outer_classname = "HiWorldProto";
+// option objc_class_prefix = "HLWI";
+
+package EventBus;
+
+service EventBus {
+  rpc DoctorInfoUpdate (DoctorInfoUpdateRequest) returns (Response) {}
+}
+
+message BiLang {
+  string en = 1;
+  string zh = 2;
+}
+
+message MutiPart {
+  string Id = 1;
+  BiLang Name = 2;
+}
+
+message Affiliation {
+  string Id = 1;
+  BiLang Name = 2;
+  string HospitalLevel = 3;
+}
+
+message DoctorInfoUpdateRequest {
+  string DoctorId = 1;
+  BiLang DisplayName = 2;
+  string AvatarFileName = 3;
+  double AvatarVersion = 4;
+  Affiliation Affiliation = 5;
+  MutiPart Department = 6;
+  MutiPart SubDepartment = 7;
+  BiLang Title = 8;
+}
+
+message Response {
+  string Status = 1;
+}

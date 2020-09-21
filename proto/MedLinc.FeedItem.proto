@@ -5,6 +5,7 @@ package FeedItem;
 service FeedItem {
   rpc GetNewsFeedByTagIdsForWmp (GetNewsFeedByTagIdsForWmpRequest) returns (GetNewsFeedByTagIdsForWmpResponse) {}
   rpc GetFeedItemDetail (GetFeedItemDetailRequest) returns (GetFeedItemDetailResponse) {}
+  rpc GetWmpFeedTagIds (GetWmpFeedTagIdsRequest) returns (GetWmpFeedTagIdsResponse) {}
 }
 
 message BiLang {
@@ -63,3 +64,10 @@ message GetFeedItemDetailRequest {
 message GetFeedItemDetailResponse {
   FeedItemDetail FeedItem = 1;
 }
+
+message GetWmpFeedTagIdsRequest {}
+
+message GetWmpFeedTagIdsResponse {
+  repeated string TagIds = 1;
+}
+

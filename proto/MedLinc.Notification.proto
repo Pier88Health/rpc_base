@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package Notification;
+
+service Notification {
+    rpc Notify (NotifyRequest) returns (NotifyResponse) {}
+    rpc CareBackendException (CareBackendExceptionRequest) returns (NotifyResponse) {}
+    rpc CareWmpBackendException (CareWmpBackendExceptionRequest) returns (NotifyResponse) {}
+    rpc ConsultationWaitingForDoctor (ConsultationWaitingForDoctorRequest) returns (NotifyResponse) {}
+    rpc PatientRegister (PatientRegisterRequest) returns (NotifyResponse) {}
+}
+
+message RecipientUser {
+  string UserId = 1;
+  string Muted = 2;
+}
+message Data {
+    string SessionId = 1;
+    string MessageId = 2;
+    repeated string RecipientUserIds = 3;
+    string MessageType = 4;
+    repeated RecipientUser OtherParticipants = 5;
+    string Text = 6;
+}
+
+message NotifyRequest {
+  Data Data = 1;
+  string NotificationType = 2;
+}
+
+message NotifyResponse {
+  string Status = 1;
+}
+
+message ConsultationWaitingForDoctorRequest {
+  string UserId = 1;
+  string ConsultationId = 2;
+}
+
+message PatientRegisterRequest {
+  string UserId = 1;
+  string PatientId = 2;
+}
+
+message CareBackendExceptionRequest {
+  string RequestString = 1;
+  string Error = 2;
+  string MethodName = 3;
+}
+
+message CareWmpBackendExceptionRequest {
+  string ErrorServiceName = 1;
+  string ErrorMethodName = 2;
+  string UserToken = 3;
+  string ClientKey = 4;
+  string ServerType = 5;
+  string Error = 6;
+  string IPAddress = 7;
+  string query = 8;
+  string body = 9;
+}

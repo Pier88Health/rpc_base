@@ -1,0 +1,168 @@
+syntax = "proto3";
+
+// option java_multiple_files = true;
+// option java_package = "io.grpc.examples.hiworld";
+// option java_outer_classname = "HiWorldProto";
+// option objc_class_prefix = "HLWI";
+
+package Chat;
+
+service Chat {
+    rpc GetSessions(GetSessionsRequest) returns (GetSessionsResponse) {}
+    rpc GetMessages(GetMessagesRequest) returns (Messages) {}
+    rpc CreateMessage(CreateMessageRequest) returns (CreateMessageResponse) {}
+    rpc EnterSessionById(EnterSessionByIdRequest) returns (EnterSession) {}
+    rpc EnterSessionByUserIds(EnterSessionByUserIdsRequest) returns (EnterSession) {}
+    rpc GetMessageById(GetMessageByIdRequest) returns (GetMessageByIdResponse) {}
+    rpc ClearHistory(ClearHistoryRequest) returns (ClearHistoryResponse) {}
+    rpc EnterSessionByConsultationId(EnterSessionByConsultationIdRequest) returns (EnterSession) {}
+}
+
+message BiLang {
+  string en = 1;
+  string zh = 2;
+}
+
+message UserInfo {
+    string _id = 1;
+    BiLang displayName = 2;
+    string UserStatus = 3;
+    string role = 4;
+    string gender = 5;
+    string uid = 6;
+    string AvatarVersion = 7;
+    string avatar = 8;
+    string pid = 9;
+    double birthdate = 10;
+    string extension = 11;
+}
+
+message Message {
+    string _id = 1;
+    string text = 2;
+    double createdAt = 3;
+    string entityId = 4;
+    string MessageType = 5;
+    string image = 6;
+    UserInfo user = 7;
+    string Score = 8;
+}
+
+message Participant {
+    string PatientId = 1;
+    string DoctorId = 2;
+    string Role = 3;
+}
+
+message Messages {
+    repeated Message Messages = 1;
+}
+
+message MedicineObj {
+    string MedicineId = 1;
+    BiLang MedicineName = 2;
+}
+
+message Consultation {
+    string ConsultationId = 1;
+    string ConsultationStatus = 2;
+    string Description = 3;
+    string DateBucket = 4;
+    string PictureFileNames = 5;
+    string DoctorAdvice = 6;
+    string MedicationRecommendation = 7;
+    string Diagnosis = 8;
+    repeated MedicineObj MedicineArray = 9;
+}
+message EnterSession {
+    string key = 1;
+    string SessionId = 2;
+    string SessionType = 3;
+    int32 NewMessageNumberInSession = 4;
+    repeated Message LatestMessages = 5;
+    repeated UserInfo Participants = 6;
+    Consultation Consultation = 7;
+    string EntityId = 8;
+    double CreatedDate = 9;
+}
+
+message Session {
+    string key = 1;
+    string SessionId = 2;
+    string sessionType = 3;
+    bool direct = 4;
+    bool group = 5;
+    int32 NewMessageCounts = 6;
+    Message last = 7;
+    repeated UserInfo users = 8;
+    repeated UserInfo otherusers = 9;
+}
+
+message GetSessionsResponse {
+    repeated Session Sessions = 1;
+    double Total = 2;
+}
+
+message CreateMessageResponse {
+    Message Message = 1;
+}
+
+message GetSessionsRequest{
+    string UserId = 1;
+    int32 Skip = 2;
+    int32 Take = 3;
+    string SessionId = 4;
+    string SearchTerm = 5;
+}
+
+message GetMessagesRequest{
+    string UserId = 1;
+    string SessionId = 2;
+    int32 Skip = 3;
+    int32 Take = 4;
+}
+
+message CreateMessageRequest {
+    string SessionId = 1;
+    string Content = 2;
+    string PictureFileName = 3;
+    string Type = 4;
+    string UserId = 5;
+}
+
+message EnterSessionByIdRequest {
+    string UserId = 1;
+    string SessionId = 2;
+    int32 Take = 3;
+}
+
+message EnterSessionByConsultationIdRequest {
+    string UserId = 1;
+    string ConsultationId = 2;
+    int32 Take = 3;
+}
+
+message EnterSessionByUserIdsRequest {
+    string UserId = 1;
+    repeated Participant Participants = 2;
+    int32 Take = 3;
+    string Type = 4;
+}
+
+message GetMessageByIdRequest {
+    string UserId = 1;
+    string MessageId = 2;
+}
+
+message GetMessageByIdResponse {
+    Message Message = 1;
+}
+
+message ClearHistoryRequest {
+    string UserId = 1;
+    string SessionId = 2;
+}
+
+message ClearHistoryResponse {
+    string message = 1;
+}

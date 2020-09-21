@@ -19,8 +19,11 @@ message BiLang {
 
 message Doctor {
   string DoctorId = 1;
-  BiLang DisplayName = 2;
-  double AvatarVersion = 3;
+  string PatientId = 2;
+  string Status = 3;
+  BiLang DisplayName = 4;
+  double RegistrationDate = 5;
+  string UserName = 6;
 }
 
 message Patient {
@@ -34,6 +37,7 @@ message Patient {
   BiLang District = 8;
   BiLang Relationship = 9;
   string UserId = 10;
+  repeated Doctor Doctors = 11;
 }
 message UserInfo {
   string UserId = 1;
@@ -43,7 +47,7 @@ message UserInfo {
   repeated Patient Patients = 5;
   double CreatedDate = 6;
   double AvatarVersion = 7;
-  Doctor RelatedDoctor = 8;
+  repeated Doctor Doctors = 8;
 }
 
 // The request message containing the user's name.
@@ -51,9 +55,8 @@ message GetUsersRequest {
   string UserName = 1;
   int32 Skip = 2;
   int32 Take = 3;
-  string DoctorId = 4;
   string PatientName = 5;
-  string Checked = 6;
+  string DoctorName = 6;
 }
 
 message GetUsersResponse {

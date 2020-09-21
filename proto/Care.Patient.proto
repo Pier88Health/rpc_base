@@ -9,6 +9,7 @@ package Patient;
 
 service Patient {
   rpc GetPatientsByDoctorUserId (GetPatientsByDoctorUserIdRequest) returns (GetPatientsByDoctorUserIdResponse) {}
+  rpc GetApplyingPatientsByDoctorUserId (GetPatientsByDoctorUserIdRequest) returns (GetPatientsByDoctorUserIdResponse) {}
   rpc GetPatientDetails (DoctorPatientIdPair) returns (PatientInfo) {}
   rpc GetPendingPatientNumberByDoctor (DoctorUserIdRequest) returns (NumberResponse) {}
   rpc AcceptPatient (DoctorPatientIdPair) returns (PatientInfo) {}
@@ -34,8 +35,10 @@ message PatientInfo {
   string PersonalId = 11;
   string PatientSource = 12;
   string PhoneNumber = 13;
-  double CreatedDate = 14;
+  double RegisterDate = 14;
   string Status = 15;
+  string RegistrationStatus = 16;
+  double AddedDate = 17;
 }
 
 message DoctorPatientIdPair {
