@@ -33,7 +33,7 @@ message Patient {
 }
 
 message Rating {
-    string Index = 1;
+    string Rating = 1;
     string DisplayText = 2;
 }
 
