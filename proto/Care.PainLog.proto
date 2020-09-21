@@ -32,7 +32,7 @@ message Patient {
     BiLang Name = 2;
 }
 
-message Distracting {
+message Rating {
     string Index = 1;
     string DisplayText = 2;
 }
@@ -40,7 +40,7 @@ message Distracting {
 message PainSite {
     BiLang BodyMap = 1;
     repeated BiLang Symptoms = 2;
-    Distracting Distracting = 3;
+    Rating Rating = 3;
 }
 
 message Medication {
@@ -52,13 +52,13 @@ message PainLogItem {
     Patient Patient = 2;
     string UserId = 3;
     repeated PainSite PainSites = 4;
-    Distracting WholeDistracting = 5;
-    Distracting ActivityLevel = 6;
+    Rating OverallRating = 5;
+    Rating ActivityLevel = 6;
     repeated BiLang Relief = 7;
     repeated BiLang Triggers = 8;
     repeated BiLang Treatments = 9;
     repeated Medication Medications = 10;
-    repeated BiLang Moods = 11;
+    repeated BiLang Mood = 11;
     BiLang Sleep = 12;
     string Notes = 13;
     string DateBucket = 14;
