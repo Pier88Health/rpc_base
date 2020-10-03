@@ -141,6 +141,7 @@ message EnterSessionByConsultationIdRequest {
     string UserId = 1;
     string ConsultationId = 2;
     int32 Take = 3;
+    bool Admin = 4;
 }
 
 message EnterSessionByUserIdsRequest {
