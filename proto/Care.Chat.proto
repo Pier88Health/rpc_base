@@ -120,6 +120,7 @@ message GetMessagesRequest{
     string SessionId = 2;
     int32 Skip = 3;
     int32 Take = 4;
+    bool Admin = 5;
 }
 
 message CreateMessageRequest {
