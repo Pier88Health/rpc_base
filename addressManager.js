@@ -1,5 +1,6 @@
 const {EventEmitter} = require('events'),
     assert = require('assert'),
+    DEBUG = require('debug')('rpc_base')
     DEFAULT_WEIGHT = 1,
     MAX_WAIT_TIME = 3000;
 
@@ -21,6 +22,7 @@ class AddressManager extends EventEmitter {
         }
         for (let entry of this._weightMap.entries()) {
             if (entry[1] > 0) {
+                DEBUG(`address select ==> ${this._key} ${entry}`);
                 return entry[0];
             }
         }
