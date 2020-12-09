@@ -3,16 +3,16 @@ const RpcClient = require('../index.js').RpcClient,
     ConfigRegistry = require('../index.js').ConfigRegistry;
     ZookeeperRegistry = require('../index.js').ZookeeperRegistry;
 
-// let registry = new RedisRegistry({ address: "localhost:6379" }),
+let registry = new RedisRegistry({ address: "localhost:6379" }),
 // let registry = new ConfigRegistry({ address: "./config.json" }), 
-let registry = new ZookeeperRegistry({ address: "localhost:2181" }),
-    rpcClient = new RpcClient({ registry: registry, protoFolder: "../proto" });
+// let registry = new ZookeeperRegistry({ address: "localhost:2181" }),
+    rpcClient = new RpcClient({ registry: registry, protoFolder: __dirname + '/proto/' });
 
 async function start() {
     let res;
     try {
         res = await rpcClient.invoke({
-            serviceName: "Like",
+            serviceName: "Test",
             methodName: "Like",
             namespace: "MedLinc",
             request: {
