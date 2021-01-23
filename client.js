@@ -1,4 +1,5 @@
 const AddressManager = require('./addressManager.js'),
+    DEBUG = require('debug')('rpc_base')
     grpc = require('grpc'),
     assert = require('assert'),
     protoLoader = require('@grpc/proto-loader'),
@@ -35,6 +36,7 @@ class RpcClient {
             addressManager = new AddressManager({key: serviceKey});
             this.addressManagerMap.set(serviceKey, addressManager);
             this.registry.subscribe({serviceName: serviceKey}, (addresses) => {
+                DEBUG(`address update ==> ${serviceKey} ${addresses}`);
                 addressManager.addressList = addresses;
             });
             await addressManager.ready();
@@ -61,6 +63,7 @@ class RpcClient {
                 oneofs: true
             }
         );
+        DEBUG('proto path: ', protoPath);
         proto = grpc.loadPackageDefinition(packageDefinition)[serviceName];
         client = new proto[serviceName](address,
             grpc.credentials.createInsecure());
@@ -75,6 +78,7 @@ class RpcClient {
             methodName = params.methodName,
             request = params.request;
         assert(serviceName && methodName, '[RpcClient.invoke] params.serviceName and params.methodName is required');
+        DEBUG(`call ==> ${namespace}#${serviceName}.${methodName} ${JSON.stringify(request)}`);
         client = await this.getClient(namespace, serviceName);
         return new Promise(function (resolve, reject) {
             client[methodName](request, function (err, response) {
@@ -84,6 +88,7 @@ class RpcClient {
                 if (response.Error) {
                     return reject(response.Error);
                 }
+                DEBUG(`response ==> ${namespace}#${serviceName}.${methodName} ${JSON.stringify(response)}`);
                 resolve(response);
             });
         });

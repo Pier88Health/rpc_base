@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "rpc_base": "git+https://github.com/Pier88Health/rpc_base.git"
+    "debug": "^4.3.1",
+    "rpc_base": "git+https://github.com/Pier88Health/rpc_base.git",
+    "zookeeper-cluster-client": "^3.1.0"
   }
 }

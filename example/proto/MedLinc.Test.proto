@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+// option java_multiple_files = true;
+// option java_package = "io.grpc.examples.hiworld";
+// option java_outer_classname = "HiWorldProto";
+// option objc_class_prefix = "HLWI";
+
+package Test;
+
+service Test {
+    rpc Like(Request) returns (Response) {}
+}
+
+message BiLang {
+  string en = 1;
+  string zh = 2;
+}
+
+message Request {
+    string GroupId = 1;
+    string EntityType = 2;
+    string EntityId = 3;
+    string UserId = 4;
+    string MemberId = 5;
+    string DisplayName = 6;
+    string SkipExisting = 7;
+    string Admin = 8;
+}
+
+message Response {
+    string p8Id = 1;
+    string GroupId = 2;
+    BiLang DisplayName = 3;
+    string EntityType = 4;
+    string EntityId = 5;
+    string MemberId = 6;
+    double CreatedBy = 7;
+}
