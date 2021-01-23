@@ -1,6 +1,10 @@
+'use strict';
+
 const {EventEmitter} = require('events'),
     assert = require('assert'),
-    DEBUG = require('debug')('rpc_base')
+    DEBUG = require('debug')('rpc_base'),
+    healthCheck = require("./lib/healthCheck.js").instance,
+    LoadBalance = require("./lib/rrobinLoadBalance.js"),
     DEFAULT_WEIGHT = 1,
     MAX_WAIT_TIME = 3000;
 
@@ -14,6 +18,7 @@ class AddressManager extends EventEmitter {
         this._addressList = null; // 地址列表
         this._weightMap = new Map(); // <host, weight>
         this._ready = false;
+        this._loadBalance = new LoadBalance({addressManager: this});
     }
 
     _selectAddress() {
@@ -37,20 +42,34 @@ class AddressManager extends EventEmitter {
         return this._addressList;
     }
 
+    get weightMap() {
+        return this._weightMap;
+    }
+
     set addressList(val) {
         this._addressList = val;
-        const newWeightMap = new Map();
         for (const address of this._addressList) {
-            newWeightMap.set(address, this._weightMap.has(address)
-                ? this._weightMap.get(address)
-                : DEFAULT_WEIGHT);
+            console.log(address);
+            if (!this._weightMap.has(address)) {
+                healthCheck.check(address, (err, check) => {
+                    let weight = check ? DEFAULT_WEIGHT : 0
+                    this._weightMap.set(address, weight);
+                });
+            } 
         }
-        this._weightMap = newWeightMap;
         this._ready = true;
     }
 
     select() {
-        return this._selectAddress();
+        return this._loadBalance.select();
+    }
+
+    async _healthCheck() {
+        for (const [address, weight] of this._weightMap.entries()) {
+            let check = await healthCheck.check(address);
+            let weight = check ? DEFAULT_WEIGHT : 0
+            this._weightMap.set(address, weight);
+        }
     }
 
     ready() {
