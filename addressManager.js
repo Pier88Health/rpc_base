@@ -5,6 +5,7 @@ const {EventEmitter} = require('events'),
     DEBUG = require('debug')('rpc_base'),
     healthCheck = require("./lib/healthCheck.js").instance,
     LoadBalance = require("./lib/rrobinLoadBalance.js"),
+    scheduler = require("./lib/scheduler.js").instance,
     DEFAULT_WEIGHT = 1,
     MAX_WAIT_TIME = 3000;
 
@@ -19,6 +20,9 @@ class AddressManager extends EventEmitter {
         this._weightMap = new Map(); // <host, weight>
         this._ready = false;
         this._loadBalance = new LoadBalance({addressManager: this});
+        scheduler.interval(() => {
+            this._healthCheck();
+        }, 10000)
     }
 
     _selectAddress() {
@@ -66,7 +70,7 @@ class AddressManager extends EventEmitter {
 
     async _healthCheck() {
         for (const [address, weight] of this._weightMap.entries()) {
-            let check = await healthCheck.check(address);
+            let check = await healthCheck.checkAsync(address);
             let weight = check ? DEFAULT_WEIGHT : 0
             this._weightMap.set(address, weight);
         }
