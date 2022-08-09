@@ -65,7 +65,7 @@ class RpcClient {
                 oneofs: true
             }
         );
-        DEBUG('proto path: ', protoPath);
+        DEBUG('RpcClient#getClient proto path ==> ', protoPath);
         proto = grpc.loadPackageDefinition(packageDefinition)[serviceName];
         client = new proto[serviceName](address,
             grpc.credentials.createInsecure());

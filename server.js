@@ -23,7 +23,7 @@ class RpcServer{
             packageDefinition,
             proto;
         assert(protoPath, `${serviceName} proto file not found`);
-        DEBUG(`RpcServer#addService protoPath ${protoPath}`);
+        DEBUG(`RpcServer#addService proto path ${protoPath}`);
         packageDefinition = protoLoader.loadSync(
             protoPath,
             {
