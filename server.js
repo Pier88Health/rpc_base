@@ -2,8 +2,8 @@
 const grpc = require('grpc'),
     assert = require('assert'),
     commom = require('./lib/common'),
+    DEBUG = require('debug')('rpc_base#server'),
     protoLoader = require('@grpc/proto-loader');
-;
 const defaultOptions = {
     protoFolder: __dirname + '/proto/'
 }
@@ -17,11 +17,13 @@ class RpcServer{
     async addService(namespace, serviceName, methodMap) {
         assert(serviceName, '[RpcServer.addService] params.serviceName is required');
         assert(methodMap, '[RpcServer.addService] params.methodMap is required');
+        DEBUG(`RpcServer#addService ${namespace} ${serviceName}`);
         let protoFileName = commom.BuildProtoFileName(namespace, serviceName),
             protoPath = commom.GetProtoFilePath(this.options.protoFolder, protoFileName),
             packageDefinition,
             proto;
         assert(protoPath, `${serviceName} proto file not found`);
+        DEBUG(`RpcServer#addService protoPath ${protoPath}`);
         packageDefinition = protoLoader.loadSync(
             protoPath,
             {

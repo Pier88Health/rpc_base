@@ -2,7 +2,7 @@ const {EventEmitter} = require('events'),
     assert = require('assert'),
     DEBUG = require('debug')('rpc_base')
     DEFAULT_WEIGHT = 1,
-    MAX_WAIT_TIME = 3000;
+    MAX_WAIT_TIME = 15000;
 
 class AddressManager extends EventEmitter {
     constructor(options = {}) {
@@ -57,7 +57,7 @@ class AddressManager extends EventEmitter {
         if (this._ready) {
             return Promise.resolve();
         }
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             let waitTime = 0,
                 inverval = setInterval(() => {
                     if (this._ready) {
@@ -66,10 +66,10 @@ class AddressManager extends EventEmitter {
 
                     }
                     waitTime += 100;
+                    DEBUG("AddressManager#ready wait for ready");
                     if (waitTime > MAX_WAIT_TIME) {
-                        console.log(`${this._key} addressManager has not been ready after ${MAX_WAIT_TIME} milliseconds`);
                         clearInterval(inverval);
-                        resolve();
+                        reject(`ERROR ==> ${this._key} addressManager has not been ready after ${MAX_WAIT_TIME} milliseconds`);
                     }
                 }, 50);
         });

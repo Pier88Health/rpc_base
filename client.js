@@ -1,5 +1,5 @@
 const AddressManager = require('./addressManager.js'),
-    DEBUG = require('debug')('rpc_base')
+    DEBUG = require('debug')('rpc_base#client'),
     grpc = require('grpc'),
     assert = require('assert'),
     protoLoader = require('@grpc/proto-loader'),
@@ -36,8 +36,10 @@ class RpcClient {
             addressManager = new AddressManager({key: serviceKey});
             this.addressManagerMap.set(serviceKey, addressManager);
             this.registry.subscribe({serviceName: serviceKey}, (addresses) => {
-                DEBUG(`address update ==> ${serviceKey} ${addresses}`);
-                addressManager.addressList = addresses;
+                if (addresses.length) {
+                    DEBUG(`address update ==> ${serviceKey} addresses: ${addresses}`);
+                    addressManager.addressList = addresses;
+                }   
             });
             await addressManager.ready();
         } else {
