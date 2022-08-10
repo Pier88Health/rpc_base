@@ -1,5 +1,5 @@
 const AddressManager = require('./addressManager.js'),
-    DEBUG = require('debug')('rpc_base#client'),
+    DEBUG = require('debug')('rpc_base'),
     grpc = require('grpc'),
     assert = require('assert'),
     protoLoader = require('@grpc/proto-loader'),

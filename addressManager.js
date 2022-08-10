@@ -41,25 +41,24 @@ class AddressManager extends EventEmitter {
     set addressList(val) {
         this._addressList = val;
         const newWeightMap = new Map();
+        let length = this._addressList.length;
+        let ready = true;
+        let count = 0;
         for (const address of this._addressList) {
-            newWeightMap.set(address, this._weightMap.has(address)
-                ? this._weightMap.get(address)
-                : DEFAULT_WEIGHT);
+            healthClient.check(address, (weight) => {
+                newWeightMap.set(address, weight);
+                count++;
+                if (count === length) {
+                    ready = true
+                }
+            });
         }
         this._weightMap = newWeightMap;
-        this._ready = true;
+        this._ready = ready;
     }
 
     async select() {
-        let address = this._selectAddress();
-        if (!address) {
-            return null;
-        }
-        let weight = await healthClient.check(address);
-        if (!weight) {
-            return null
-        }
-        return address;
+        return this._selectAddress();
     }
 
     ready() {

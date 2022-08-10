@@ -2,7 +2,7 @@
 const grpc = require('grpc'),
     assert = require('assert'),
     commom = require('./lib/common'),
-    DEBUG = require('debug')('rpc_base#server'),
+    DEBUG = require('debug')('rpc_base'),
     health = require('grpc-health-check'),
     protoLoader = require('@grpc/proto-loader');
 const defaultOptions = {
