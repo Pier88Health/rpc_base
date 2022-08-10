@@ -3,15 +3,23 @@ const grpc = require('grpc'),
     assert = require('assert'),
     commom = require('./lib/common'),
     DEBUG = require('debug')('rpc_base#server'),
+    health = require('grpc-health-check'),
     protoLoader = require('@grpc/proto-loader');
 const defaultOptions = {
     protoFolder: __dirname + '/proto/'
 }
+
+const statusMap = {
+    "Check": proto.grpc.health.v1.HealthCheckResponse.ServingStatus.SERVING,
+    "": proto.grpc.health.v1.HealthCheckResponse.ServingStatus.SERVING,
+};
+
 class RpcServer{
     constructor(options = {}) {
         assert(options.bindPoint, '[RpcServer] options.bindPoint is required')
         this.options = Object.assign({}, defaultOptions, options);
         this.server = new grpc.Server();
+        this.healthImpl = new health.Implementation(statusMap);
     }
 
     async addService(namespace, serviceName, methodMap) {
@@ -39,6 +47,7 @@ class RpcServer{
     }
 
     start() {
+        this.server.addService(health.service, this.healthImpl);
         this.server.bind(this.options.bindPoint, grpc.ServerCredentials.createInsecure());
         this.server.start();
     }

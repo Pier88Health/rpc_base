@@ -1,5 +1,6 @@
 const {EventEmitter} = require('events'),
     assert = require('assert'),
+    healthClient = require("./lib/health").instance,
     DEBUG = require('debug')('rpc_base')
     DEFAULT_WEIGHT = 1,
     MAX_WAIT_TIME = 15000;
@@ -49,8 +50,16 @@ class AddressManager extends EventEmitter {
         this._ready = true;
     }
 
-    select() {
-        return this._selectAddress();
+    async select() {
+        let address = this._selectAddress();
+        if (!address) {
+            return null;
+        }
+        let weight = await healthClient.check(address);
+        if (!weight) {
+            return null
+        }
+        return address;
     }
 
     ready() {
@@ -61,11 +70,9 @@ class AddressManager extends EventEmitter {
             let waitTime = 0,
                 inverval = setInterval(() => {
                     if (this._ready) {
-                        resolve();
                         clearInterval(inverval);
-
+                        return resolve();
                     }
-                    waitTime += 100;
                     DEBUG("AddressManager#ready wait for ready");
                     if (waitTime > MAX_WAIT_TIME) {
                         clearInterval(inverval);

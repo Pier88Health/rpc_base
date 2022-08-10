@@ -3,6 +3,7 @@ const AddressManager = require('./addressManager.js'),
     grpc = require('grpc'),
     assert = require('assert'),
     protoLoader = require('@grpc/proto-loader'),
+    MAX_RETRY = 3,
     commom = require("./lib/common.js");
     // registry = new ConfigRegistry({address: __dirname + "/../rpc/registry/config.json"});
 function buildClientKey(params) {
@@ -39,14 +40,14 @@ class RpcClient {
                 if (addresses.length) {
                     DEBUG(`address update ==> ${serviceKey} addresses: ${addresses}`);
                     addressManager.addressList = addresses;
-                }   
+                }
             });
             await addressManager.ready();
         } else {
             addressManager = this.addressManagerMap.get(serviceKey);
         }
         assert(protoPath, `${serviceName} proto file not found`);
-        address = addressManager.select();
+        address = await addressManager.select();
         if (!address) {
             return null;
         }
@@ -82,6 +83,10 @@ class RpcClient {
         assert(serviceName && methodName, '[RpcClient.invoke] params.serviceName and params.methodName is required');
         DEBUG(`call ==> ${namespace}#${serviceName}.${methodName} ${JSON.stringify(request)}`);
         client = await this.getClient(namespace, serviceName);
+        if (!client) {
+            console.error(`call ==> ${namespace}#${serviceName} not available`);
+            client = await this.getClient(namespace, serviceName);
+        }
         return new Promise(function (resolve, reject) {
             client[methodName](request, function (err, response) {
                 if (err) {
