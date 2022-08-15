@@ -1,6 +1,6 @@
 const {EventEmitter} = require('events'),
     assert = require('assert'),
-    healthClient = require("./lib/health").instance,
+    HealthClient = require("./lib/health"),
     DEBUG = require('debug')('rpc_base')
     DEFAULT_WEIGHT = 1,
     MAX_WAIT_TIME = 15000;
@@ -45,7 +45,7 @@ class AddressManager extends EventEmitter {
         let ready = true;
         let count = 0;
         for (const address of this._addressList) {
-            healthClient.check(address, (weight) => {
+            HealthClient.instance.check(address, (weight) => {
                 newWeightMap.set(address, weight);
                 count++;
                 if (count === length) {
