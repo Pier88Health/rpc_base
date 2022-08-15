@@ -9,7 +9,8 @@ let registry = new RedisRegistry({ address: "localhost:6379" }),
     rpcClient = new RpcClient({ registry: registry, protoFolder: __dirname + '/proto/' });
 
 async function start() {
-    let res = await rpcClient.invoke({
+    let res = await rpcClient.invokeRetry({
+        Retry: 3,
         serviceName: "Test",
         methodName: "Like",
         namespace: "Example",

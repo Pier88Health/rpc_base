@@ -100,6 +100,49 @@ class RpcClient {
             });
         });
     }
+
+    async invokeRetry(params) {
+        let client,
+            result,
+            namespace = params.namespace,
+            serviceName = params.serviceName,
+            methodName = params.methodName;
+        assert(serviceName && methodName, '[RpcClient.invokeRetry] params.serviceName and params.methodName is required');
+        client = await this.getClient(namespace, serviceName);
+        try {
+            result = await this._invoke({
+                ...params,
+                Client: client
+            });
+        } catch (err) {
+            if (params.Retry === 0) {
+                throw err;
+            }
+            DEBUG(`invokeRetry ==> ${namespace}#${serviceName}.${methodName} Retry ${params.Retry}`);
+            params.Retry = params.Retry - 1;
+            result = await this.invokeRetry(params)
+        }
+        return result;
+    }
+
+    async _invoke(params) {
+        let namespace = params.namespace,
+            serviceName = params.serviceName,
+            methodName = params.methodName,
+            request = params.request,
+            client = params.Client;
+        assert(serviceName && methodName, '[RpcClient.invoke] params.serviceName and params.methodName is required');
+        DEBUG(`call ==> ${namespace}#${serviceName}.${methodName} ${JSON.stringify(request)}`);
+        return new Promise(function (resolve, reject) {
+            client[methodName](request, function (err, response) {
+                if (err) {
+                    return reject(err);
+                }
+                DEBUG(`response ==> ${namespace}#${serviceName}.${methodName} ${JSON.stringify(response)}`);
+                resolve(response);
+            });
+        });
+    }
 }
 
 module.exports = RpcClient;
