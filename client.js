@@ -47,7 +47,7 @@ class RpcClient {
             addressManager = this.addressManagerMap.get(serviceKey);
         }
         assert(protoPath, `${serviceName} proto file not found`);
-        address = await addressManager.select();
+        address = addressManager.select();
         if (!address) {
             return null;
         }

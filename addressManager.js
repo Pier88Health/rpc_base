@@ -57,7 +57,7 @@ class AddressManager extends EventEmitter {
         this._ready = ready;
     }
 
-    async select() {
+    select() {
         return this._selectAddress();
     }
 
