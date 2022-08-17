@@ -1,6 +1,6 @@
 {
   "name": "rpc_base",
-  "version": "0.1.1",
+  "version": "1.5.0",
   "description": "rpc module for dev",
   "main": "index.js",
   "scripts": {
