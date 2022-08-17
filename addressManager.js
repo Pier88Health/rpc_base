@@ -1,7 +1,9 @@
 const {EventEmitter} = require('events'),
     assert = require('assert'),
+    HealthClient = require("./lib/health"),
+    DEBUG = require('debug')('rpc_base')
     DEFAULT_WEIGHT = 1,
-    MAX_WAIT_TIME = 3000;
+    MAX_WAIT_TIME = 15000;
 
 class AddressManager extends EventEmitter {
     constructor(options = {}) {
@@ -21,6 +23,7 @@ class AddressManager extends EventEmitter {
         }
         for (let entry of this._weightMap.entries()) {
             if (entry[1] > 0) {
+                DEBUG(`address select ==> ${this._key} ${entry}`);
                 return entry[0];
             }
         }
@@ -38,13 +41,20 @@ class AddressManager extends EventEmitter {
     set addressList(val) {
         this._addressList = val;
         const newWeightMap = new Map();
+        let length = this._addressList.length;
+        let ready = true;
+        let count = 0;
         for (const address of this._addressList) {
-            newWeightMap.set(address, this._weightMap.has(address)
-                ? this._weightMap.get(address)
-                : DEFAULT_WEIGHT);
+            HealthClient.instance.check(address, (weight) => {
+                newWeightMap.set(address, weight);
+                count++;
+                if (count === length) {
+                    ready = true
+                }
+            });
         }
         this._weightMap = newWeightMap;
-        this._ready = true;
+        this._ready = ready;
     }
 
     select() {
@@ -55,19 +65,17 @@ class AddressManager extends EventEmitter {
         if (this._ready) {
             return Promise.resolve();
         }
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             let waitTime = 0,
                 inverval = setInterval(() => {
                     if (this._ready) {
-                        resolve();
                         clearInterval(inverval);
-
+                        return resolve();
                     }
-                    waitTime += 100;
+                    DEBUG("AddressManager#ready wait for ready");
                     if (waitTime > MAX_WAIT_TIME) {
-                        console.log(`${this._key} addressManager has not been ready after ${MAX_WAIT_TIME} milliseconds`);
                         clearInterval(inverval);
-                        resolve();
+                        reject(`ERROR ==> ${this._key} addressManager has not been ready after ${MAX_WAIT_TIME} milliseconds`);
                     }
                 }, 50);
         });
