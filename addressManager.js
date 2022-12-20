@@ -18,16 +18,20 @@ class AddressManager extends EventEmitter {
     }
 
     _selectAddress() {
+        let res;
         if (this._weightMap.size === 0) {
             return null;
         }
         for (let entry of this._weightMap.entries()) {
             if (entry[1] > 0) {
-                DEBUG(`address select ==> ${this._key} ${entry}`);
+                DEBUG(`AddressManager#select address ==> ${this._key} ${entry}`);
                 return entry[0];
+            } else {
+                DEBUG(`AddressManager#select not health address ==> ${this._key} ${entry}`);
+                res = entry[0];
             }
         }
-        return null;
+        return res;
     }
 
     get key() {
